@@ -1,0 +1,7 @@
+# For PyCharm files
+.idea
+.idea/
+/.idea/
+
+~
+.DS_Store
