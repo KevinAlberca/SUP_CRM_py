@@ -10,6 +10,10 @@ customers = []
 def index():
     return 'Hello World !'
 
+@app.route("/list")
+def listCustomer():
+    return json.dumps(customers)
+
 @app.route('/create', methods=['POST'])
 def createCustomer():
     # Send data in POST method
