@@ -69,6 +69,10 @@ def saveInSpreadSheet():
             return json.dumps(False)
     return json.dumps(True)
 
+@app.route('/getClient/<int:customer_id>', methods=['GET'])
+def viewCustomerWithId(customer_id):
+    return json.dumps(json.loads(customers[customer_id]))
+
 
 if __name__ == "__main__":
     app.run('192.168.33.22', debug=True)
