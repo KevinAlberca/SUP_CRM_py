@@ -1,21 +1,20 @@
 from flask import Flask, render_template, request, abort, redirect, url_for
 import json
-from Client import *
 app = Flask(__name__)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 
 BASE_GS_URL = "https://docs.google.com/spreadsheets/d/"
+# 1fZxqVvxGvze4JljdxV-lCGddj00j4yPGCZCD7370DIY
 
 # When you want to open a Google Sheet, you have to share with the e-mail in your credential.json
 scope = ['https://spreadsheets.google.com/feeds']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('MyCRM_StupidCredentials.json', scope)
 
-
 # Dictionnary contains every customers added with createCustomer method
 # customers = []
-customers = [{"company": "ChnewCompany", "state": "prospect", "firstname": "Chi", "lastname": "Noa"}, {"company": "AwH", "state": "partner", "firstname": "K", "lastname": "A"}]
+customers = ['{"company": "ChnewCompany", "state": "prospect", "firstname": "Chi", "lastname": "Noa"}', '{"company": "AwH", "state": "partner", "firstname": "K", "lastname": "A"}']
 
 @app.route("/")
 def index():
@@ -31,13 +30,14 @@ def index():
 
 @app.route("/list", methods=['GET'])
 def listCustomer():
+    print(customers)
     return json.dumps(customers)
 
 @app.route('/create', methods=['POST'])
 def createCustomer():
     # Send data in POST method
     if request.method == 'POST':
-        customers.append(request.form)
+        customers.append(json.dumps(request.form))
     return json.dumps(customers)
 
 @app.route('/view/<string:value>/<string:action>', methods=['GET'])
@@ -49,10 +49,10 @@ def getClientsByValueWithAction(value, action):
                 c.append(customer)
     return json.dumps(c)
 
-@app.route('/save/<string:spreadsheet_id>', methods=['GET'])
-def saveInSpreadSheet(spreadsheet_id):
+@app.route('/save', methods=['POST'])
+def saveInSpreadSheet():
     c = gspread.authorize(credentials)
-    gs = c.open_by_key(spreadsheet_id)
+    gs = c.open_by_key(request.form['spreadsheet_id'])
 
     wks_width = len(customers[0])
     wks_height = len(customers)
@@ -60,14 +60,13 @@ def saveInSpreadSheet(spreadsheet_id):
 
     wks = gs.add_worksheet(title=today, rows=wks_height, cols=wks_width)
     wks.append_row(customers[0].keys())
-
     if wks != None:
         for key, customer in enumerate(customers):
             wks.append_row(customer.values())
-    else :
-        return json.dumps('Error : The worksheet already exists')
+        else :
+            return json.dumps(False)
+    return json.dumps(True)
 
-    return True
 
 if __name__ == "__main__":
     app.run('192.168.33.22', debug=True)
