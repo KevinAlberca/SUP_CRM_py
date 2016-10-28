@@ -73,6 +73,13 @@ def saveInSpreadSheet():
 def viewCustomerWithId(customer_id):
     return json.dumps(json.loads(customers[customer_id]))
 
+@app.route('/edit/<int:customer_id>', methods=['POST'])
+def editCustomerWithId(customer_id):
+    print('Custo :',  customers[customer_id] )
+    customers[customer_id] = json.dumps(request.form)
+    return json.dumps(customers)
+
+
 
 if __name__ == "__main__":
     app.run('192.168.33.22', debug=True)
