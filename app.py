@@ -30,7 +30,6 @@ def index():
 
 @app.route("/list", methods=['GET'])
 def listCustomer():
-    print(customers)
     return json.dumps(customers)
 
 @app.route('/create', methods=['POST'])
@@ -54,17 +53,23 @@ def saveInSpreadSheet():
     c = gspread.authorize(credentials)
     gs = c.open_by_key(request.form['spreadsheet_id'])
 
-    wks_width = len(customers[0])
+    print('Type : ', type(customers))
+    print(type( json.loads(customers[0]) ))
+
+    wks_width = len(json.loads(customers[0]))
     wks_height = len(customers)
     today = str(datetime.datetime.today())
 
     wks = gs.add_worksheet(title=today, rows=wks_height, cols=wks_width)
-    wks.append_row(customers[0].keys())
-    if wks != None:
-        for key, customer in enumerate(customers):
-            wks.append_row(customer.values())
-        else :
-            return json.dumps(False)
+    wks.append_row(json.loads(customers[0]).keys())
+    # if wks != None:
+    #     for key, customer in enumerate(customers):
+    #         print('Key : ', key)
+    #         print('Customer : ', customer)
+    #         print('Type : ', type(json.loads(customer))) # Dict
+    #         # wks.append_row(customer.values())
+    #     else :
+    #         return json.dumps(False)
     return json.dumps(True)
 
 
