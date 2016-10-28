@@ -62,14 +62,11 @@ def saveInSpreadSheet():
 
     wks = gs.add_worksheet(title=today, rows=wks_height, cols=wks_width)
     wks.append_row(json.loads(customers[0]).keys())
-    # if wks != None:
-    #     for key, customer in enumerate(customers):
-    #         print('Key : ', key)
-    #         print('Customer : ', customer)
-    #         print('Type : ', type(json.loads(customer))) # Dict
-    #         # wks.append_row(customer.values())
-    #     else :
-    #         return json.dumps(False)
+    if wks != None:
+        for key, customer in enumerate(customers):
+            wks.append_row(json.loads(customer).values())
+        else :
+            return json.dumps(False)
     return json.dumps(True)
 
 
