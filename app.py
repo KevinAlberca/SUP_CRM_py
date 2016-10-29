@@ -75,10 +75,14 @@ def viewCustomerWithId(customer_id):
 
 @app.route('/edit/<int:customer_id>', methods=['POST'])
 def editCustomerWithId(customer_id):
-    print('Custo :',  customers[customer_id] )
     customers[customer_id] = json.dumps(request.form)
-    return json.dumps(customers)
+    return json.dumps(True)
 
+@app.route('/delete/<int:customer_id>', methods=['POST'])
+def deleteCustomerWithId(customer_id):
+    if customers[customer_id] in customers:
+        del customers[customer_id]
+    return json.dumps(customers)
 
 
 if __name__ == "__main__":
