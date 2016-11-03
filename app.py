@@ -35,15 +35,13 @@ def listCustomer():
 @app.route('/create', methods=['POST'])
 def createCustomer():
     # Send data in POST method
-    if request.method == 'POST':
-        customers.append(json.dumps(request.form))
+    customers.append(json.dumps(request.form))
     return json.dumps(customers)
 
-@app.route('/view/<string:value>/<string:action>', methods=['POST'])
+@app.route('/view/<string:value>/<string:action>', methods=['GET'])
 def getClientsByValueWithAction(value, action):
     c = []
     for key, customer in enumerate(customers):
-        print('Custo', customer)
         if json.loads(customer)[action] == value:
             c.append(customer)
     return json.dumps(c)
@@ -62,8 +60,8 @@ def saveInSpreadSheet():
     if wks != None:
         for key, customer in enumerate(customers):
             wks.append_row(json.loads(customer).values())
-        else :
-            return json.dumps(False)
+    else:
+        return json.dumps(False)
     return json.dumps(True)
 
 @app.route('/getClient/<int:customer_id>', methods=['GET'])
@@ -79,7 +77,8 @@ def editCustomerWithId(customer_id):
 def deleteCustomerWithId(customer_id):
     if customers[customer_id] in customers:
         del customers[customer_id]
-    return json.dumps(customers)
+        return json.dumps(True)
+    return json.dumps(False)
 
 
 if __name__ == "__main__":
