@@ -39,22 +39,19 @@ def createCustomer():
         customers.append(json.dumps(request.form))
     return json.dumps(customers)
 
-@app.route('/view/<string:value>/<string:action>', methods=['GET'])
+@app.route('/view/<string:value>/<string:action>', methods=['POST'])
 def getClientsByValueWithAction(value, action):
     c = []
-    for customer in customers:
-        if action in customer.keys():
-            if customer[action] == value:
-                c.append(customer)
+    for key, customer in enumerate(customers):
+        print('Custo', customer)
+        if json.loads(customer)[action] == value:
+            c.append(customer)
     return json.dumps(c)
 
 @app.route('/save', methods=['POST'])
 def saveInSpreadSheet():
     c = gspread.authorize(credentials)
     gs = c.open_by_key(request.form['spreadsheet_id'])
-
-    print('Type : ', type(customers))
-    print(type( json.loads(customers[0]) ))
 
     wks_width = len(json.loads(customers[0]))
     wks_height = len(customers)
